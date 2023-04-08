@@ -1,8 +1,12 @@
-from dotenv import load_dotenv
-load_dotenv()
+import os.path
+
+if os.path.exists('.env'):
+    from dotenv import load_dotenv
+    load_dotenv()
 
 import asyncio
 import logging.config
+import os
 
 import yaml
 
@@ -13,6 +17,7 @@ from toonstats.finders.toonhq import ToonHQToonFinder
 
 with open('logging.yml', 'r') as f:
     log_config = yaml.safe_load(f)
+    log_config['handlers']['logtail']['source_token'] = os.environ.get('SOURCE_TOKEN')
 
 
 logging.config.dictConfig(log_config)
