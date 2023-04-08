@@ -1,3 +1,4 @@
 .env
 logging.yml
 .venv/
+__pycache__/
