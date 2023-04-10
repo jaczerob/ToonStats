@@ -3,16 +3,14 @@ package dev.jaczerob.toonstats.config;
 import dev.jaczerob.toonstats.entities.ToonEntity;
 import dev.jaczerob.toonstats.repositories.ToonRepository;
 import dev.jaczerob.toonstats.services.toons.locators.ToonLocator;
+import io.quarkus.scheduler.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 
-@Configuration
-@EnableScheduling
+@ApplicationScoped
 public class CronConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(CronConfig.class);
 
@@ -24,8 +22,7 @@ public class CronConfig {
         this.toonRepository = toonRepository;
     }
 
-    // run every 10 minutes
-    @Scheduled(fixedRate = 1000 * 60 * 10)
+    @Scheduled(every = "10m")
     public void updateToons() {
         LOGGER.info("Running cron job to update toons...");
 

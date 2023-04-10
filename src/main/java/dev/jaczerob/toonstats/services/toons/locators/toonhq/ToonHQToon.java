@@ -12,15 +12,15 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ToonHQToon {
     private static final Map<String, Integer> ORGANIC_LOOKUP = Map.of(
-            "toonup",  1,
-            "trap",  2,
-            "lure",  3,
-            "sound",  4,
-            "throw",  5,
-            "squirt",  6,
-            "drop",  7
+            "toonup", 1,
+            "trap", 2,
+            "lure", 3,
+            "sound", 4,
+            "throw", 5,
+            "squirt", 6,
+            "drop", 7
     );
-    
+
     private Integer id;
     private Integer game;
     private String photo;
@@ -64,7 +64,7 @@ public class ToonHQToon {
         } else {
             toonEntity.setOrganic(ORGANIC_LOOKUP.getOrDefault(this.getPrestiges().get(0), 0));
         }
-        
+
         return toonEntity;
     }
 }
