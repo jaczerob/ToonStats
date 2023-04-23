@@ -3,14 +3,11 @@ package dev.jaczerob.toonstats.config;
 import dev.jaczerob.toonstats.services.toons.locators.ToonLocator;
 import dev.jaczerob.toonstats.services.toons.locators.toonhq.ToonHQToonLocator;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-
-@Dependent
+@Configuration
 public class ToonConfig {
-    @Produces
+    @Bean
     public ToonLocator getToonLocator() {
         return new ToonHQToonLocator();
     }

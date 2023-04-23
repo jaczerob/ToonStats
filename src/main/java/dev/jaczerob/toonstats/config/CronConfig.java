@@ -1,28 +1,28 @@
 package dev.jaczerob.toonstats.config;
 
 import dev.jaczerob.toonstats.entities.ToonEntity;
-import dev.jaczerob.toonstats.repositories.ToonRepository;
+import dev.jaczerob.toonstats.services.toons.ToonService;
 import dev.jaczerob.toonstats.services.toons.locators.ToonLocator;
-import io.quarkus.scheduler.Scheduled;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 
-@ApplicationScoped
+@Configuration
 public class CronConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CronConfig.class);
+    private static final Logger LOGGER = LogManager.getLogger(CronConfig.class);
 
     private final ToonLocator toonLocator;
-    private final ToonRepository toonRepository;
+    private final ToonService toonService;
 
-    public CronConfig(final ToonLocator toonLocator, final ToonRepository toonRepository) {
+    public CronConfig(final ToonLocator toonLocator, final ToonService toonService) {
         this.toonLocator = toonLocator;
-        this.toonRepository = toonRepository;
+        this.toonService = toonService;
     }
 
-    @Scheduled(every = "10m")
+    @Scheduled(cron = "0 0/10 * * * *")
     public void updateToons() {
         LOGGER.info("Running cron job to update toons...");
 
@@ -32,15 +32,9 @@ public class CronConfig {
             return;
         }
 
-        LOGGER.info("Found {} toons", toons.size());
+        toonService.updateToons(toons);
+        LOGGER.info("Found and updated %s toons".formatted(toons.size()));
 
-        final List<ToonEntity> savedToons = toonRepository.saveAll(toons);
-        if (savedToons.isEmpty()) {
-            LOGGER.warn("No toons saved!");
-            return;
-        }
-
-        LOGGER.info("Saved {} toons", savedToons.size());
         LOGGER.info("Cron job finished");
     }
 }
