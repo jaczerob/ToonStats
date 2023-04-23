@@ -6,6 +6,8 @@ import com.vaadin.flow.router.Route;
 import dev.jaczerob.toonstats.entities.ToonEntity;
 import dev.jaczerob.toonstats.services.toons.ToonService;
 
+import java.util.List;
+
 @Route("")
 public class MainView extends VerticalLayout {
     // [{"id": 1, "name": "Bear", "image": "bear.png", "game": 1}, {"id": 2, "name": "Cat", "image": "cat.png", "game": 1}, {"id": 3, "name": "Dog", "image": "dog.png", "game": 1}, {"id": 4, "name": "Duck", "image": "duck.png", "game": 1}, {"id": 5, "name": "Horse", "image": "horse.png", "game": 1}, {"id": 6, "name": "Monkey", "image": "monkey.png", "game": 1}, {"id": 7, "name": "Mouse", "image": "mouse.png", "game": 1}, {"id": 8, "name": "Pig", "image": "pig.png", "game": 1}, {"id": 9, "name": "Rabbit", "image": "rabbit.png", "game": 1}, {"id": 10, "name": "Deer", "image": "deer.png", "game": 1}, {"id": 11, "name": "Crocodile", "image": "crocodile.png"
@@ -35,18 +37,20 @@ public class MainView extends VerticalLayout {
     }
 
     public MainView(final ToonService toonService) {
-        final long totalToons = toonService.getToons().size();
+        final List<ToonEntity> toons = toonService.getToons();
+        
+        final long totalToons = toons.size();
         add(new Paragraph(String.format("Toon sample size obtained from scraping ToonHQ: %s", totalToons)));
 
         final Paragraph laffParagraph = new Paragraph();
         laffParagraph.getStyle().set("white-space", "pre-line");
 
-        final long maxedToons = toonService.getToons().stream().filter(t -> t.getLaff() == 140).count();
+        final long maxedToons = toons.stream().filter(t -> t.getLaff() == 140).count();
         final String maxedPercentage = String.format("Toons with max laff: %.2f%%%n", (double) maxedToons / totalToons * 100);
 
         laffParagraph.add(maxedPercentage);
 
-        final double averageLaff = toonService.getToons().stream().mapToLong(ToonEntity::getLaff).average().orElse(0);
+        final double averageLaff = toons.stream().mapToLong(ToonEntity::getLaff).average().orElse(0);
         final String averageLaffPercentage = String.format("Average laff: %.2f%n", averageLaff);
 
         laffParagraph.add(averageLaffPercentage);
@@ -57,7 +61,7 @@ public class MainView extends VerticalLayout {
         speciesParagraph.getStyle().set("white-space", "pre-line");
 
         for (final Species species : Species.values()) {
-            final long stat = toonService.getToons().stream().filter(t -> t.getSpecies() == species.ordinal() + 1).count();
+            final long stat = toons.stream().filter(t -> t.getSpecies() == species.ordinal() + 1).count();
             final String percentage = String.format("Toons with species %s: %.2f%%%n", species.name(), (double) stat / totalToons * 100);
 
             speciesParagraph.add(percentage);
@@ -69,7 +73,7 @@ public class MainView extends VerticalLayout {
         organicsParagraph.getStyle().set("white-space", "pre-line");
 
         for (final Organic organic : Organic.values()) {
-            final long stat = toonService.getToons().stream().filter(t -> t.getOrganic() == organic.ordinal()).count();
+            final long stat = toons.stream().filter(t -> t.getOrganic() == organic.ordinal()).count();
             final String percentage = String.format("Toons with organic %s: %.2f%%%n", organic.name(), (double) stat / totalToons * 100);
 
             organicsParagraph.add(percentage);
@@ -77,10 +81,10 @@ public class MainView extends VerticalLayout {
 
         add(organicsParagraph);
 
-        final long toonsWithMaxSellbot = toonService.getToons().stream().filter(t -> t.getSellbot() == 8).count();
-        final long toonsWithMaxCashbot = toonService.getToons().stream().filter(t -> t.getCashbot() == 8).count();
-        final long toonsWithMaxLawbot = toonService.getToons().stream().filter(t -> t.getLawbot() == 8).count();
-        final long toonsWithMaxBossbot = toonService.getToons().stream().filter(t -> t.getBossbot() == 8).count();
+        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
+        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
+        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
+        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
 
         final Paragraph cogTypesParagraph = new Paragraph();
         cogTypesParagraph.getStyle().set("white-space", "pre-line");
