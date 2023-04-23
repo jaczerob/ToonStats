@@ -80,19 +80,19 @@ public class MainView extends VerticalLayout {
 
         add(organicsParagraph);
 
-//        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
-//        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
-//        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
-//        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
-//
-//        final Paragraph cogTypesParagraph = new Paragraph();
-//        cogTypesParagraph.getStyle().set("white-space", "pre-line");
-//
-//        cogTypesParagraph.add(String.format("Toons with max Sellbot: %.2f%%%n", (double) toonsWithMaxSellbot / totalToons * 100));
-//        cogTypesParagraph.add(String.format("Toons with max Cashbot: %.2f%%%n", (double) toonsWithMaxCashbot / totalToons * 100));
-//        cogTypesParagraph.add(String.format("Toons with max Lawbot: %.2f%%%n", (double) toonsWithMaxLawbot / totalToons * 100));
-//        cogTypesParagraph.add(String.format("Toons with max Bossbot: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
-//
-//        add(cogTypesParagraph);
+        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
+        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
+        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
+        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
+
+        final Paragraph cogTypesParagraph = new Paragraph();
+        cogTypesParagraph.getStyle().set("white-space", "pre-line");
+
+        cogTypesParagraph.add(String.format("Toons with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / totalToons * 100));
+        cogTypesParagraph.add(String.format("Toons with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / totalToons * 100));
+        cogTypesParagraph.add(String.format("Toons with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / totalToons * 100));
+        cogTypesParagraph.add(String.format("Toons with the Big Cheese: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
+
+        add(cogTypesParagraph);
     }
 }
