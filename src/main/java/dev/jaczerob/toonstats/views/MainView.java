@@ -91,7 +91,7 @@ public class MainView extends VerticalLayout {
         cogTypesParagraph.add(String.format("Toons with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / totalToons * 100));
         cogTypesParagraph.add(String.format("Toons with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / totalToons * 100));
         cogTypesParagraph.add(String.format("Toons with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with the Big Cheese: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
+        cogTypesParagraph.add(String.format("Toons with the Big Cheese suit: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
 
         add(cogTypesParagraph);
     }
