@@ -3,7 +3,7 @@ package dev.jaczerob.toonstats.views;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import dev.jaczerob.toonstats.entities.ToonEntity;
+import dev.jaczerob.toonstats.dto.ToonDTO;
 import dev.jaczerob.toonstats.services.toons.ToonService;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class MainView extends VerticalLayout {
     }
 
     public MainView(final ToonService toonService) {
-        final List<ToonEntity> toons = toonService.getToons();
+        final List<ToonDTO> toons = toonService.getToons();
 
         add(getLaffParagraph(toons));
         add(getSpeciesParagraph(toons));
@@ -52,7 +52,7 @@ public class MainView extends VerticalLayout {
         return paragraph;
     }
 
-    private static Paragraph getCogTypesAbove100LaffParagraph(final List<ToonEntity> toons) {
+    private static Paragraph getCogTypesAbove100LaffParagraph(final List<ToonDTO> toons) {
         final Paragraph paragraph = initParagraph();
 
         final long totalToonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).count();
@@ -70,7 +70,7 @@ public class MainView extends VerticalLayout {
         return paragraph;
     }
 
-    private static Paragraph getOrganicsAbove100LaffParagraph(final List<ToonEntity> toons) {
+    private static Paragraph getOrganicsAbove100LaffParagraph(final List<ToonDTO> toons) {
         final Paragraph paragraph = initParagraph();
 
         final long totalToonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).count();
@@ -85,7 +85,7 @@ public class MainView extends VerticalLayout {
         return paragraph;
     }
 
-    private static Paragraph getLaffParagraph(final List<ToonEntity> toons) {
+    private static Paragraph getLaffParagraph(final List<ToonDTO> toons) {
         final Paragraph paragraph = initParagraph();
 
         final long maxedToons = toons.stream().filter(t -> t.getLaff() == 140).count();
@@ -93,7 +93,7 @@ public class MainView extends VerticalLayout {
 
         paragraph.add(maxedPercentage);
 
-        final double averageLaff = toons.stream().mapToLong(ToonEntity::getLaff).average().orElse(0);
+        final double averageLaff = toons.stream().mapToLong(ToonDTO::getLaff).average().orElse(0);
         final String averageLaffPercentage = String.format("Average laff: %.2f%n", averageLaff);
 
         paragraph.add(averageLaffPercentage);
@@ -101,7 +101,7 @@ public class MainView extends VerticalLayout {
         return paragraph;
     }
 
-    private static Paragraph getSpeciesParagraph(final List<ToonEntity> toons) {
+    private static Paragraph getSpeciesParagraph(final List<ToonDTO> toons) {
         final Paragraph paragraph = initParagraph();
 
         for (final Species species : Species.values()) {
@@ -114,7 +114,7 @@ public class MainView extends VerticalLayout {
         return paragraph;
     }
 
-    private static Paragraph getOrganicsParagraph(final List<ToonEntity> toons) {
+    private static Paragraph getOrganicsParagraph(final List<ToonDTO> toons) {
         final Paragraph paragraph = initParagraph();
 
         for (final Organic organic : Organic.values()) {
@@ -127,7 +127,7 @@ public class MainView extends VerticalLayout {
         return paragraph;
     }
 
-    private static Paragraph getCogTypesParagraph(final List<ToonEntity> toons) {
+    private static Paragraph getCogTypesParagraph(final List<ToonDTO> toons) {
         final Paragraph paragraph = initParagraph();
 
         final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
