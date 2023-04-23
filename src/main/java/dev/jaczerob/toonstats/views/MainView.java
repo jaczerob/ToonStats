@@ -37,62 +37,109 @@ public class MainView extends VerticalLayout {
 
     public MainView(final ToonService toonService) {
         final List<ToonEntity> toons = toonService.getToons();
-        
-        final long totalToons = toons.size();
-        add(new Paragraph(String.format("Toon sample size obtained from scraping ToonHQ: %s", totalToons)));
 
-        final Paragraph laffParagraph = new Paragraph();
-        laffParagraph.getStyle().set("white-space", "pre-line");
+        add(getLaffParagraph(toons));
+        add(getSpeciesParagraph(toons));
+        add(getOrganicsParagraph(toons));
+        add(getOrganicsAbove100LaffParagraph(toons));
+        add(getCogTypesParagraph(toons));
+        add(getCogTypesAbove100LaffParagraph(toons));
+    }
+
+    private static Paragraph initParagraph() {
+        final Paragraph paragraph = new Paragraph();
+        paragraph.getStyle().set("white-space", "pre-line");
+        return paragraph;
+    }
+
+    private static Paragraph getCogTypesAbove100LaffParagraph(final List<ToonEntity> toons) {
+        final Paragraph paragraph = initParagraph();
+
+        final long totalToonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).count();
+
+        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getSellbot() == 8).count();
+        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getCashbot() == 8).count();
+        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getLawbot() == 8).count();
+        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getBossbot() == 8).count();
+
+        paragraph.add(String.format("Toons above 100 laff with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / totalToonsAbove100Laff * 100));
+        paragraph.add(String.format("Toons above 100 laff with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / totalToonsAbove100Laff * 100));
+        paragraph.add(String.format("Toons above 100 laff with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / totalToonsAbove100Laff * 100));
+        paragraph.add(String.format("Toons above 100 laff with the Big Cheese suit: %.2f%%%n", (double) toonsWithMaxBossbot / totalToonsAbove100Laff * 100));
+
+        return paragraph;
+    }
+
+    private static Paragraph getOrganicsAbove100LaffParagraph(final List<ToonEntity> toons) {
+        final Paragraph paragraph = initParagraph();
+
+        final long totalToonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).count();
+
+        for (final Organic organic : Organic.values()) {
+            final long stat = toons.stream().filter(t -> t.getLaff() >= 100 && t.getOrganic() == organic.ordinal()).count();
+            final String percentage = String.format("Toons above 100 laff with organic %s: %.2f%%%n", organic.name(), (double) stat / totalToonsAbove100Laff * 100);
+
+            paragraph.add(percentage);
+        }
+
+        return paragraph;
+    }
+
+    private static Paragraph getLaffParagraph(final List<ToonEntity> toons) {
+        final Paragraph paragraph = initParagraph();
 
         final long maxedToons = toons.stream().filter(t -> t.getLaff() == 140).count();
-        final String maxedPercentage = String.format("Toons with max laff: %.2f%%%n", (double) maxedToons / totalToons * 100);
+        final String maxedPercentage = String.format("Toons with max laff: %.2f%%%n", (double) maxedToons / toons.size() * 100);
 
-        laffParagraph.add(maxedPercentage);
+        paragraph.add(maxedPercentage);
 
         final double averageLaff = toons.stream().mapToLong(ToonEntity::getLaff).average().orElse(0);
         final String averageLaffPercentage = String.format("Average laff: %.2f%n", averageLaff);
 
-        laffParagraph.add(averageLaffPercentage);
+        paragraph.add(averageLaffPercentage);
 
-        add(laffParagraph);
+        return paragraph;
+    }
 
-        final Paragraph speciesParagraph = new Paragraph();
-        speciesParagraph.getStyle().set("white-space", "pre-line");
+    private static Paragraph getSpeciesParagraph(final List<ToonEntity> toons) {
+        final Paragraph paragraph = initParagraph();
 
         for (final Species species : Species.values()) {
             final long stat = toons.stream().filter(t -> t.getSpecies() == species.ordinal() + 1).count();
-            final String percentage = String.format("Toons with species %s: %.2f%%%n", species.name(), (double) stat / totalToons * 100);
+            final String percentage = String.format("Toons with species %s: %.2f%%%n", species.name(), (double) stat / toons.size() * 100);
 
-            speciesParagraph.add(percentage);
+            paragraph.add(percentage);
         }
 
-        add(speciesParagraph);
+        return paragraph;
+    }
 
-        final Paragraph organicsParagraph = new Paragraph();
-        organicsParagraph.getStyle().set("white-space", "pre-line");
+    private static Paragraph getOrganicsParagraph(final List<ToonEntity> toons) {
+        final Paragraph paragraph = initParagraph();
 
         for (final Organic organic : Organic.values()) {
             final long stat = toons.stream().filter(t -> t.getOrganic() == organic.ordinal()).count();
-            final String percentage = String.format("Toons with organic %s: %.2f%%%n", organic.name(), (double) stat / totalToons * 100);
+            final String percentage = String.format("Toons with organic %s: %.2f%%%n", organic.name(), (double) stat / toons.size() * 100);
 
-            organicsParagraph.add(percentage);
+            paragraph.add(percentage);
         }
 
-        add(organicsParagraph);
+        return paragraph;
+    }
+
+    private static Paragraph getCogTypesParagraph(final List<ToonEntity> toons) {
+        final Paragraph paragraph = initParagraph();
 
         final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
         final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
         final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
         final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
 
-        final Paragraph cogTypesParagraph = new Paragraph();
-        cogTypesParagraph.getStyle().set("white-space", "pre-line");
+        paragraph.add(String.format("Toons with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / toons.size() * 100));
+        paragraph.add(String.format("Toons with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / toons.size() * 100));
+        paragraph.add(String.format("Toons with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / toons.size() * 100));
+        paragraph.add(String.format("Toons with the Big Cheese suit: %.2f%%%n", (double) toonsWithMaxBossbot / toons.size() * 100));
 
-        cogTypesParagraph.add(String.format("Toons with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with the Big Cheese suit: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
-
-        add(cogTypesParagraph);
+        return paragraph;
     }
 }
