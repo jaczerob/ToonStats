@@ -10,7 +10,6 @@ import java.util.List;
 
 @Route("")
 public class MainView extends VerticalLayout {
-    // [{"id": 1, "name": "Bear", "image": "bear.png", "game": 1}, {"id": 2, "name": "Cat", "image": "cat.png", "game": 1}, {"id": 3, "name": "Dog", "image": "dog.png", "game": 1}, {"id": 4, "name": "Duck", "image": "duck.png", "game": 1}, {"id": 5, "name": "Horse", "image": "horse.png", "game": 1}, {"id": 6, "name": "Monkey", "image": "monkey.png", "game": 1}, {"id": 7, "name": "Mouse", "image": "mouse.png", "game": 1}, {"id": 8, "name": "Pig", "image": "pig.png", "game": 1}, {"id": 9, "name": "Rabbit", "image": "rabbit.png", "game": 1}, {"id": 10, "name": "Deer", "image": "deer.png", "game": 1}, {"id": 11, "name": "Crocodile", "image": "crocodile.png"
     public enum Species {
         Bear,
         Cat,
@@ -81,19 +80,19 @@ public class MainView extends VerticalLayout {
 
         add(organicsParagraph);
 
-        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
-        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
-        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
-        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
-
-        final Paragraph cogTypesParagraph = new Paragraph();
-        cogTypesParagraph.getStyle().set("white-space", "pre-line");
-
-        cogTypesParagraph.add(String.format("Toons with max Sellbot: %.2f%%%n", (double) toonsWithMaxSellbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with max Cashbot: %.2f%%%n", (double) toonsWithMaxCashbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with max Lawbot: %.2f%%%n", (double) toonsWithMaxLawbot / totalToons * 100));
-        cogTypesParagraph.add(String.format("Toons with max Bossbot: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
-
-        add(cogTypesParagraph);
+//        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
+//        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
+//        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
+//        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
+//
+//        final Paragraph cogTypesParagraph = new Paragraph();
+//        cogTypesParagraph.getStyle().set("white-space", "pre-line");
+//
+//        cogTypesParagraph.add(String.format("Toons with max Sellbot: %.2f%%%n", (double) toonsWithMaxSellbot / totalToons * 100));
+//        cogTypesParagraph.add(String.format("Toons with max Cashbot: %.2f%%%n", (double) toonsWithMaxCashbot / totalToons * 100));
+//        cogTypesParagraph.add(String.format("Toons with max Lawbot: %.2f%%%n", (double) toonsWithMaxLawbot / totalToons * 100));
+//        cogTypesParagraph.add(String.format("Toons with max Bossbot: %.2f%%%n", (double) toonsWithMaxBossbot / totalToons * 100));
+//
+//        add(cogTypesParagraph);
     }
 }
