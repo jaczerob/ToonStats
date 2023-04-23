@@ -1,5 +1,6 @@
 package dev.jaczerob.toonstats.config;
 
+import dev.jaczerob.toonstats.dto.ToonDTO;
 import dev.jaczerob.toonstats.entities.ToonEntity;
 import dev.jaczerob.toonstats.services.toons.ToonService;
 import dev.jaczerob.toonstats.services.toons.locators.ToonLocator;
@@ -26,7 +27,7 @@ public class CronConfig {
     public void updateToons() {
         LOGGER.info("Running cron job to update toons...");
 
-        final List<ToonEntity> toons = toonLocator.findToons();
+        final List<ToonDTO> toons = toonLocator.findToons();
         if (toons.isEmpty()) {
             LOGGER.warn("No toons found! Could be an error or there are no toons to update.");
             return;

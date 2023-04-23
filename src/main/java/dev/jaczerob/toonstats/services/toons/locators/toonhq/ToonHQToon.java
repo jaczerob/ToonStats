@@ -2,6 +2,7 @@ package dev.jaczerob.toonstats.services.toons.locators.toonhq;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.jaczerob.toonstats.dto.ToonDTO;
 import dev.jaczerob.toonstats.entities.ToonEntity;
 import lombok.Data;
 
@@ -41,30 +42,30 @@ public class ToonHQToon {
     private Integer lawbot;
     private Integer bossbot;
 
-    public ToonEntity toToonEntity() {
-        final ToonEntity toonEntity = new ToonEntity();
+    public ToonDTO toToonDTO() {
+        final ToonDTO toonDTO = new ToonDTO();
 
-        toonEntity.setId(id);
-        toonEntity.setSpecies(species);
-        toonEntity.setLaff(laff);
-        toonEntity.setGagToonup(toonup);
-        toonEntity.setGagTrap(trap);
-        toonEntity.setGagLure(lure);
-        toonEntity.setGagSound(sound);
-        toonEntity.setGagThrow(throwGag);
-        toonEntity.setGagSquirt(squirt);
-        toonEntity.setGagDrop(drop);
-        toonEntity.setSellbot(sellbot);
-        toonEntity.setCashbot(cashbot);
-        toonEntity.setLawbot(lawbot);
-        toonEntity.setBossbot(bossbot);
+        toonDTO.setId(id);
+        toonDTO.setSpecies(species);
+        toonDTO.setLaff(laff);
+        toonDTO.setGagToonup(toonup);
+        toonDTO.setGagTrap(trap);
+        toonDTO.setGagLure(lure);
+        toonDTO.setGagSound(sound);
+        toonDTO.setGagThrow(throwGag);
+        toonDTO.setGagSquirt(squirt);
+        toonDTO.setGagDrop(drop);
+        toonDTO.setSellbot(sellbot);
+        toonDTO.setCashbot(cashbot);
+        toonDTO.setLawbot(lawbot);
+        toonDTO.setBossbot(bossbot);
 
         if (this.getPrestiges().isEmpty()) {
-            toonEntity.setOrganic(0);
+            toonDTO.setOrganic(0);
         } else {
-            toonEntity.setOrganic(ORGANIC_LOOKUP.getOrDefault(this.getPrestiges().get(0), 0));
+            toonDTO.setOrganic(ORGANIC_LOOKUP.getOrDefault(this.getPrestiges().get(0), 0));
         }
 
-        return toonEntity;
+        return toonDTO;
     }
 }

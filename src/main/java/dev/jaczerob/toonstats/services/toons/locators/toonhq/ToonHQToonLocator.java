@@ -2,7 +2,7 @@ package dev.jaczerob.toonstats.services.toons.locators.toonhq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.jaczerob.toonstats.entities.ToonEntity;
+import dev.jaczerob.toonstats.dto.ToonDTO;
 import dev.jaczerob.toonstats.services.toons.locators.ToonLocator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,7 +22,7 @@ public class ToonHQToonLocator implements ToonLocator {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
-    public List<ToonEntity> findToons() {
+    public List<ToonDTO> findToons() {
         final Document document;
 
         try {
@@ -34,7 +34,7 @@ public class ToonHQToonLocator implements ToonLocator {
 
         final Matcher toonMatcher = TOON_PATTERN.matcher(document.html());
 
-        final List<ToonEntity> toons = new ArrayList<>();
+        final List<ToonDTO> toons = new ArrayList<>();
 
         while (toonMatcher.find()) {
             final String toonJson = toonMatcher.group(1);
@@ -59,7 +59,7 @@ public class ToonHQToonLocator implements ToonLocator {
                 continue;
             }
 
-            toons.add(toonHQToon.toToonEntity());
+            toons.add(toonHQToon.toToonDTO());
         }
 
         return toons;
