@@ -1,12 +1,24 @@
 package dev.jaczerob.toonstats.views;
 
-import com.vaadin.flow.component.html.Paragraph;
+import com.github.appreciated.apexcharts.ApexCharts;
+import com.github.appreciated.apexcharts.ApexChartsBuilder;
+import com.github.appreciated.apexcharts.config.builder.ChartBuilder;
+import com.github.appreciated.apexcharts.config.builder.LegendBuilder;
+import com.github.appreciated.apexcharts.config.builder.TitleSubtitleBuilder;
+import com.github.appreciated.apexcharts.config.chart.Type;
+import com.github.appreciated.apexcharts.config.legend.Position;
+import com.github.appreciated.apexcharts.config.legend.builder.LabelsBuilder;
+import com.github.appreciated.apexcharts.config.subtitle.builder.StyleBuilder;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import dev.jaczerob.toonstats.dto.ToonDTO;
 import dev.jaczerob.toonstats.services.toons.ToonService;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Route("")
 public class MainView extends VerticalLayout {
@@ -36,110 +48,96 @@ public class MainView extends VerticalLayout {
     }
 
     public MainView(final ToonService toonService) {
+        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+
+        add(new H1("Toon Stats"));
+
         final List<ToonDTO> toons = toonService.getToons();
+        final List<ToonDTO> toonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).toList();
 
-        add(getLaffParagraph(toons));
-        add(getSpeciesParagraph(toons));
-        add(getOrganicsParagraph(toons));
-        add(getOrganicsAbove100LaffParagraph(toons));
-        add(getCogTypesParagraph(toons));
-        add(getCogTypesAbove100LaffParagraph(toons));
+        add(new H4("Total Toons as scraped from ToonHQ's ToonSync: " + toons.size()));
+
+        add(createSpeciesChart(toons));
+        add(createOrganicChart(toons));
+        add(createToonsAbove100LaffWithTier8BossbotSuit(toonsAbove100Laff));
+        add(createToonsAbove100LaffWithTier8LawbotSuit(toonsAbove100Laff));
+        add(createToonsAbove100LaffWithTier8CashbotSuit(toonsAbove100Laff));
+        add(createToonsAbove100LaffWithTier8SellbotSuit(toonsAbove100Laff));
     }
 
-    private static Paragraph initParagraph() {
-        final Paragraph paragraph = new Paragraph();
-        paragraph.getStyle().set("white-space", "pre-line");
-        return paragraph;
+    private static ApexCharts createPieChart(final String title, final List<String> labels, final List<Double> series) {
+        final ApexCharts apexCharts = ApexChartsBuilder.get()
+                .withTitle(TitleSubtitleBuilder.get().withText(title).withStyle(StyleBuilder.get().withColor("white").build()).build())
+                .withChart(ChartBuilder.get().withType(Type.PIE).build())
+                .withLabels(labels.toArray(new String[0]))
+                .withLegend(LegendBuilder.get()
+                        .withPosition(Position.LEFT)
+                        .withLabels(LabelsBuilder.get()
+                                .withUseSeriesColors(true)
+                                .build())
+                        .build())
+                .withSeries(series.toArray(new Double[0]))
+                .build();
+
+        apexCharts.setHeight("480px");
+        apexCharts.setWidth("480px");
+
+        return apexCharts;
     }
 
-    private static Paragraph getCogTypesAbove100LaffParagraph(final List<ToonDTO> toons) {
-        final Paragraph paragraph = initParagraph();
-
-        final long totalToonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).count();
-
-        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getSellbot() == 8).count();
-        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getCashbot() == 8).count();
-        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getLawbot() == 8).count();
-        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getLaff() >= 100 && t.getBossbot() == 8).count();
-
-        paragraph.add(String.format("Toons above 100 laff with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / totalToonsAbove100Laff * 100));
-        paragraph.add(String.format("Toons above 100 laff with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / totalToonsAbove100Laff * 100));
-        paragraph.add(String.format("Toons above 100 laff with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / totalToonsAbove100Laff * 100));
-        paragraph.add(String.format("Toons above 100 laff with the Big Cheese suit: %.2f%%%n", (double) toonsWithMaxBossbot / totalToonsAbove100Laff * 100));
-
-        return paragraph;
+    private static ApexCharts createSpeciesChart(final List<ToonDTO> toons) {
+        final List<String> labels = Stream.of(Species.values()).map(Enum::name).toList();
+        final List<Double> series = Stream.of(Species.values()).map(s -> Double.valueOf(toons.stream().filter(t -> t.getSpecies() == s.ordinal() + 1).count())).toList();
+        return createPieChart("Species", labels, series);
     }
 
-    private static Paragraph getOrganicsAbove100LaffParagraph(final List<ToonDTO> toons) {
-        final Paragraph paragraph = initParagraph();
-
-        final long totalToonsAbove100Laff = toons.stream().filter(t -> t.getLaff() >= 100).count();
-
-        for (final Organic organic : Organic.values()) {
-            final long stat = toons.stream().filter(t -> t.getLaff() >= 100 && t.getOrganic() == organic.ordinal()).count();
-            final String percentage = String.format("Toons above 100 laff with organic %s: %.2f%%%n", organic.name(), (double) stat / totalToonsAbove100Laff * 100);
-
-            paragraph.add(percentage);
-        }
-
-        return paragraph;
+    private static ApexCharts createOrganicChart(final List<ToonDTO> toons) {
+        final List<String> labels = Stream.of(Organic.values()).map(Enum::name).toList();
+        final List<Double> series = Stream.of(Organic.values()).map(o -> Double.valueOf(toons.stream().filter(t -> t.getOrganic() == o.ordinal()).count())).toList();
+        return createPieChart("Organic", labels, series);
     }
 
-    private static Paragraph getLaffParagraph(final List<ToonDTO> toons) {
-        final Paragraph paragraph = initParagraph();
+    private static ApexCharts createToonsAbove100LaffWithTier8BossbotSuit(final List<ToonDTO> toons) {
+        final List<String> labels = List.of("With", "Without");
 
-        final long maxedToons = toons.stream().filter(t -> t.getLaff() == 140).count();
-        final String maxedPercentage = String.format("Toons with max laff: %.2f%%%n", (double) maxedToons / toons.size() * 100);
+        final double toonsWithTier8BossbotSuit = (double) toons.stream().filter(t -> t.getBossbot() == 8).count();
+        final Double toonsWithoutTier8BossbotSuit = toons.size() - toonsWithTier8BossbotSuit;
 
-        paragraph.add(maxedPercentage);
+        final List<Double> series = List.of(toonsWithTier8BossbotSuit, toonsWithoutTier8BossbotSuit);
 
-        final double averageLaff = toons.stream().mapToLong(ToonDTO::getLaff).average().orElse(0);
-        final String averageLaffPercentage = String.format("Average laff: %.2f%n", averageLaff);
-
-        paragraph.add(averageLaffPercentage);
-
-        return paragraph;
+        return createPieChart("Toons Above 100 Laff With Tier 8 Bossbot Suit", labels, series);
     }
 
-    private static Paragraph getSpeciesParagraph(final List<ToonDTO> toons) {
-        final Paragraph paragraph = initParagraph();
+    private static ApexCharts createToonsAbove100LaffWithTier8LawbotSuit(final List<ToonDTO> toons) {
+        final List<String> labels = List.of("With", "Without");
 
-        for (final Species species : Species.values()) {
-            final long stat = toons.stream().filter(t -> t.getSpecies() == species.ordinal() + 1).count();
-            final String percentage = String.format("Toons with species %s: %.2f%%%n", species.name(), (double) stat / toons.size() * 100);
+        final double toonsWithTier8LawbotSuit = (double) toons.stream().filter(t -> t.getLawbot() == 8).count();
+        final Double toonsWithoutTier8LawbotSuit = toons.size() - toonsWithTier8LawbotSuit;
 
-            paragraph.add(percentage);
-        }
+        final List<Double> series = List.of(toonsWithTier8LawbotSuit, toonsWithoutTier8LawbotSuit);
 
-        return paragraph;
+        return createPieChart("Toons Above 100 Laff With Tier 8 Lawbot Suit", labels, series);
     }
 
-    private static Paragraph getOrganicsParagraph(final List<ToonDTO> toons) {
-        final Paragraph paragraph = initParagraph();
+    private static ApexCharts createToonsAbove100LaffWithTier8CashbotSuit(final List<ToonDTO> toons) {
+        final List<String> labels = List.of("With", "Without");
 
-        for (final Organic organic : Organic.values()) {
-            final long stat = toons.stream().filter(t -> t.getOrganic() == organic.ordinal()).count();
-            final String percentage = String.format("Toons with organic %s: %.2f%%%n", organic.name(), (double) stat / toons.size() * 100);
+        final double toonsWithTier8CashbotSuit = (double) toons.stream().filter(t -> t.getCashbot() == 8).count();
+        final Double toonsWithoutTier8CashbotSuit = toons.size() - toonsWithTier8CashbotSuit;
 
-            paragraph.add(percentage);
-        }
+        final List<Double> series = List.of(toonsWithTier8CashbotSuit, toonsWithoutTier8CashbotSuit);
 
-        return paragraph;
+        return createPieChart("Toons Above 100 Laff With Tier 8 Cashbot Suit", labels, series);
     }
 
-    private static Paragraph getCogTypesParagraph(final List<ToonDTO> toons) {
-        final Paragraph paragraph = initParagraph();
+    private static ApexCharts createToonsAbove100LaffWithTier8SellbotSuit(final List<ToonDTO> toons) {
+        final List<String> labels = List.of("With", "Without");
 
-        final long toonsWithMaxSellbot = toons.stream().filter(t -> t.getSellbot() == 8).count();
-        final long toonsWithMaxCashbot = toons.stream().filter(t -> t.getCashbot() == 8).count();
-        final long toonsWithMaxLawbot = toons.stream().filter(t -> t.getLawbot() == 8).count();
-        final long toonsWithMaxBossbot = toons.stream().filter(t -> t.getBossbot() == 8).count();
+        final double toonsWithTier8SellbotSuit = (double) toons.stream().filter(t -> t.getSellbot() == 8).count();
+        final Double toonsWithoutTier8SellbotSuit = toons.size() - toonsWithTier8SellbotSuit;
 
-        paragraph.add(String.format("Toons with the Mr. Hollywood suit: %.2f%%%n", (double) toonsWithMaxSellbot / toons.size() * 100));
-        paragraph.add(String.format("Toons with the Robber Baron suit: %.2f%%%n", (double) toonsWithMaxCashbot / toons.size() * 100));
-        paragraph.add(String.format("Toons with the Big Wig suit: %.2f%%%n", (double) toonsWithMaxLawbot / toons.size() * 100));
-        paragraph.add(String.format("Toons with the Big Cheese suit: %.2f%%%n", (double) toonsWithMaxBossbot / toons.size() * 100));
+        final List<Double> series = List.of(toonsWithTier8SellbotSuit, toonsWithoutTier8SellbotSuit);
 
-        return paragraph;
+        return createPieChart("Toons Above 100 Laff With Tier8 Sellbot Suit", labels, series);
     }
 }

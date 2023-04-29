@@ -1,8 +1,8 @@
 package dev.jaczerob.toonstats.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import lombok.Data;
 
 @Entity(name = "toons")
