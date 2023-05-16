@@ -1,9 +1,14 @@
-FROM openjdk:17-jdk-slim
+FROM python:3.11
 
-COPY target/toonstats.jar toonstats.jar
+RUN apt-get update
+RUN apt-get install gcc
+RUN pip install poetry
 
-EXPOSE 8080
-USER 1001
+COPY poetry.lock pyproject.toml /
 
-CMD ["java", "-Dvaadin.productionMode=true", "-jar", "./toonstats.jar"]
+RUN poetry config virtualenvs.create false \
+  && poetry install --no-interaction --no-ansi
 
+COPY toonstats /toonstats
+
+CMD ["python", "-m", "toonstats"]
