@@ -10,6 +10,8 @@ python = "^3.11"
 aiohttp = "^3.8.4"
 aiomysql = "^0.1.1"
 loguru = "^0.7.0"
+fastapi = "^0.95.2"
+uvicorn = "^0.22.0"
 
 
 [build-system]

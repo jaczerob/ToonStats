@@ -2,7 +2,10 @@ version: '3'
 
 services:
   toonstats:
+    platform: linux/amd64
     image: jaczerob/toonstats
     build: .
+    ports:
+      - 8080:8080
     env_file:
       - .env
