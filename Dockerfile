@@ -15,4 +15,4 @@ COPY toonstats /toonstats
 
 EXPOSE 8080
 
-CMD uvicorn toonstats.__main__:app --port 8080 --host '0.0.0.0' --workers 1
+CMD uvicorn toonstats.app.main:app --port 8080 --host '0.0.0.0' --workers 1

@@ -22,7 +22,7 @@ class ToonHQToon:
     lawbot: int
     bossbot: int
 
-    def to_tuple(self) -> tuple[int]:
+    def to_tuple(self) -> tuple[int, ...]:
         return (
             self.id,
             self.species,
